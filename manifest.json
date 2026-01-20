@@ -17,6 +17,9 @@
     "requirements.txt": {
       "checksum": "b08783de7783c829f03d45df4daed6b7"
     },
+    ".gitignore": {
+      "checksum": "8914dd111afbf4b9736ad7e86be06314"
+    },
     ".posit/publish/deployments/deployment-330L.toml": {
       "checksum": "0009af08542fe0674fa44653ca04db3f"
     },
@@ -36,7 +39,7 @@
       "checksum": "b50ac523ce505e30af97b61bb95d301b"
     },
     "app.py": {
-      "checksum": "bb4e7cc6aaa766f7e1f45d5c160cdf98"
+      "checksum": "ee475ff26976815e7a57a855115b67c0"
     },
     "static/assets/index-COcDBgFa.css": {
       "checksum": "14d54539054b6abaa4878a58be0e783f"
