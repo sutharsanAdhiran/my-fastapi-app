@@ -4,39 +4,40 @@ from fastapi.responses import FileResponse
 from shiny import App, ui
 import os
 
-# --- 1. Your FastAPI Setup ---
+# --- 1. Your FastAPI App ---
 api_app = FastAPI()
 
-# API Endpoint
 @api_app.get("/api/test")
 async def test_api():
-    return {"status": "success", "message": "FastAPI is live!"}
+    return {"status": "success", "message": "FastAPI is working inside Shiny!"}
 
-# Serve React static assets (JS/CSS)
+# --- 2. Serving React ---
 if os.path.exists("static"):
-    # This mounts the folder 'static' to the URL path '/static'
     api_app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Catch-all to serve index.html for the React Frontend
 @api_app.get("/{catchall:path}")
 async def serve_react_app(catchall: str):
     file_path = os.path.join("static", catchall)
-    # 1. Check if the specific file exists (like /favicon.ico)
     if os.path.isfile(file_path):
         return FileResponse(file_path)
     
-    # 2. Otherwise, serve index.html for React Router
     index_path = os.path.join("static", "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    
-    return {"error": "React build (index.html) not found in /static folder"}
+    return {"error": "Static files not found"}
 
-# --- 2. The Shiny Wrapper ---
-# We create a minimal Shiny app, but we immediately 
-# overwrite its handler with our FastAPI app.
-app = App(ui.page_fluid(), None)
+# --- 3. The Shiny Wrapper (The Part Posit Cloud Sees) ---
+app_ui = ui.page_fluid(
+    ui.h2("Application Gateway"),
+    ui.p("If you see this, the server is live. Go to /api/test to check the API."),
+    ui.tags.script("window.location.href = '/api/test';") # Optional: Auto-redirect to API
+)
 
-# IMPORTANT: This line redirects ALL traffic to FastAPI
-# It must come after 'app' is defined.
-app.handler = api_app
+def server(input, output, session):
+    pass
+
+app = App(app_ui, server)
+
+# MOUNT FastAPI to the Shiny ASGI app
+# This makes FastAPI handle routes starting with /api or any other specified
+app.mount("/", api_app)
