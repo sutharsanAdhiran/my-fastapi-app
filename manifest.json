@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "locale": "English_India.1252",
+  "metadata": {
+    "appmode": "python-shiny",
+    "entrypoint": "app:app"
+  },
+  "python": {
+    "version": "3.11.9",
+    "package_manager": {
+      "name": "pip",
+      "version": "24.0",
+      "package_file": "requirements.txt"
+    }
+  },
+  "files": {
+    "requirements.txt": {
+      "checksum": "b08783de7783c829f03d45df4daed6b7"
+    },
+    ".posit/publish/deployments/deployment-330L.toml": {
+      "checksum": "0009af08542fe0674fa44653ca04db3f"
+    },
+    ".posit/publish/deployments/deployment-OJ8I.toml": {
+      "checksum": "a58ff13294013f2d9d65b4997981624d"
+    },
+    ".posit/publish/deployments/deployment-TGAM.toml": {
+      "checksum": "13c0a1cd902ef2861254b4a11d53692d"
+    },
+    ".posit/publish/my-fastapi-app-EFBG.toml": {
+      "checksum": "b50ac523ce505e30af97b61bb95d301b"
+    },
+    ".posit/publish/my-fastapi-app-IR13.toml": {
+      "checksum": "b50ac523ce505e30af97b61bb95d301b"
+    },
+    ".posit/publish/my-fastapi-app-V17O.toml": {
+      "checksum": "b50ac523ce505e30af97b61bb95d301b"
+    },
+    "app.py": {
+      "checksum": "bb4e7cc6aaa766f7e1f45d5c160cdf98"
+    },
+    "static/assets/index-COcDBgFa.css": {
+      "checksum": "14d54539054b6abaa4878a58be0e783f"
+    },
+    "static/assets/index-j_k5bXI_.js": {
+      "checksum": "9157e69f1bebfe99463a3a586f849a37"
+    },
+    "static/assets/react-CHdo91hT.svg": {
+      "checksum": "f0402b67b6ce880f65666bb49e841696"
+    },
+    "static/index.html": {
+      "checksum": "cb20087ff0c75b513e54a3f37053e4be"
+    },
+    "static/vite.svg": {
+      "checksum": "8e3a10e157f75ada21ab742c022d5430"
+    }
+  }
+}
