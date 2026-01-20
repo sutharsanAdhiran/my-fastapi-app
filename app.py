@@ -1,47 +1,37 @@
-import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse
 from shiny import App, ui
+import os
 
-# 1. Your FastAPI Logic
+# 1. Your FastAPI App (The real logic)
 api_app = FastAPI()
 
-@api_app.get("/test") # This will be available at /api/test
+@api_app.get("/api/test")
 async def test_api():
-    return {"status": "success", "message": "FastAPI is active on /api path!"}
+    return {"status": "success", "message": "FastAPI via Middleware is working!"}
 
-# 2. The Shiny UI (The Entry Point)
-# This will be the first thing people see. We provide a direct link
-# to your React frontend to ensure the user gets there.
-app_ui = ui.page_fluid(
-    ui.h2("Application Gateway"),
-    ui.p("Click the button below to enter the application."),
-    ui.a("Enter App", href="/app/", class_="btn btn-primary"),
-    # This meta tag tries to do it automatically
-    ui.head_content(
-        ui.tags.meta(http_equiv="refresh", content="0; url=/app/")
-    )
-)
+# Serve React build
+if os.path.exists("static"):
+    api_app.mount("/static", StaticFiles(directory="static"), name="static")
 
+@api_app.get("/{catchall:path}")
+async def serve_react_app(catchall: str):
+    file_path = os.path.join("static", catchall)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    index_path = os.path.join("static", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"error": "index.html not found"}
+
+# 2. The Shiny "Shell" (The part that satisfies the Cloud)
+app_ui = ui.page_fluid(ui.h3("Redirecting..."))
 def server(input, output, session):
     pass
 
 app = App(app_ui, server)
 
-# 3. Handle the React Frontend manually via FastAPI
-# We create a separate FastAPI instance specifically for the Frontend
-frontend_app = FastAPI()
-
-if os.path.exists("static"):
-    frontend_app.mount("/assets", StaticFiles(directory="static"), name="assets")
-
-@frontend_app.get("/{catchall:path}")
-async def serve_react(catchall: str):
-    index_path = os.path.join("static", "index.html")
-    return FileResponse(index_path)
-
-# 4. MOUNT BOTH TO THE SHINY APP
-# This is the most stable way to avoid route conflicts on Connect Cloud
-app.mount("/api", api_app)      # Your API logic is now at /api
-app.mount("/app", frontend_app) # Your React app is now at /app
+# 3. THE FIX: Attach FastAPI as the underlying ASGI handler
+# This bypasses the Shiny UI and lets FastAPI handle everything.
+app.asgi_app = api_app
