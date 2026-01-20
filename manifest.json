@@ -2,7 +2,7 @@
   "version": 1,
   "locale": "English_India.1252",
   "metadata": {
-    "appmode": "python-shiny",
+    "appmode": "python-fastapi",
     "entrypoint": "app:app"
   },
   "python": {
@@ -39,7 +39,7 @@
       "checksum": "b50ac523ce505e30af97b61bb95d301b"
     },
     "app.py": {
-      "checksum": "ee475ff26976815e7a57a855115b67c0"
+      "checksum": "cbc6c1b2169ec0a9916024904fffb10b"
     },
     "static/assets/index-COcDBgFa.css": {
       "checksum": "14d54539054b6abaa4878a58be0e783f"

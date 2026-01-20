@@ -1,37 +1,30 @@
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from shiny import App, ui
-import os
 
-# 1. Your FastAPI App (The real logic)
-api_app = FastAPI()
+app = FastAPI()
 
-@api_app.get("/api/test")
+# 1. API Endpoint
+@app.get("/api/test")
 async def test_api():
-    return {"status": "success", "message": "FastAPI via Middleware is working!"}
+    return {"status": "success", "message": "Native FastAPI is working!"}
 
-# Serve React build
+# 2. Serve React Static Files
+# This assumes your build files are in a folder named 'static'
 if os.path.exists("static"):
-    api_app.mount("/static", StaticFiles(directory="static"), name="static")
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@api_app.get("/{catchall:path}")
-async def serve_react_app(catchall: str):
+# 3. React Catch-all (Must be last)
+@app.get("/{catchall:path}")
+async def serve_react(catchall: str):
+    # Check if a specific file exists (e.g., favicon.ico)
     file_path = os.path.join("static", catchall)
     if os.path.isfile(file_path):
         return FileResponse(file_path)
+    
+    # Fallback to index.html for React Router
     index_path = os.path.join("static", "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return {"error": "index.html not found"}
-
-# 2. The Shiny "Shell" (The part that satisfies the Cloud)
-app_ui = ui.page_fluid(ui.h3("Redirecting..."))
-def server(input, output, session):
-    pass
-
-app = App(app_ui, server)
-
-# 3. THE FIX: Attach FastAPI as the underlying ASGI handler
-# This bypasses the Shiny UI and lets FastAPI handle everything.
-app.asgi_app = api_app
+    return {"error": "Static folder missing index.html"}
